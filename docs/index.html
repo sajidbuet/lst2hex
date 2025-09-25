@@ -2,81 +2,385 @@
 <html>
 <head>
     <title>Convert LST to  HEX</title>
+    <style>
+        /* Global styles */
+        body {
+          margin: 0;
+          font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f8f8f8;
+          color: #333;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
     
+        header {
+          background-color: #ac1f24;
+          color: #fff;
+          padding: 1rem 2rem;
+          text-align: center;
+        }
+    
+        header h1 {
+          margin: 0;
+          font-size: 1.8rem;
+        }
+    
+        main {
+          flex: 1;
+          padding: 2rem;
+          max-width: 900px;
+          margin: auto;
+          background: #fff;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          border-radius: 8px;
+        }
+    
+        p.description {
+          font-style: italic;
+          line-height: 1.5;
+          margin-bottom: 1.5rem;
+        }
+    
+        ol.instructions {
+          background: #fdf2f3;
+          border-left: 5px solid #ac1f24;
+          padding: 1rem 1.5rem;
+          border-radius: 4px;
+          margin-bottom: 2rem;
+          line-height: 1.6;
+        }
+    
+        ol.instructions li {
+          margin-bottom: 0.6rem;
+        }
+    
+        form {
+          margin-bottom: 1.5rem;
+        }
+    
+        label {
+          font-weight: bold;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+    
+        input[type="file"] {
+          display: block;
+          margin-bottom: 1rem;
+        }
+    
+        input[type="submit"] {
+          background-color: #ac1f24;
+          color: #fff;
+          border: none;
+          padding: 0.7rem 1.5rem;
+          border-radius: 4px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+    
+        input[type="submit"]:hover {
+          background-color: #8c1820;
+        }
+    
+        .accordion {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.accordion-header {
+  background: rgba(172, 31, 36, 0.85); /* faded by default */
+  color: #fff;
+  cursor: pointer;
+  padding: 0.8rem 1rem;
+  font-weight: bold;
+  user-select: none;
+  transition: background 0.3s ease;
+}
+
+.accordion-header:hover {
+  background: rgba(172, 31, 36, 1); /* fully prominent */
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  background: #fdf2f3;
+  padding: 0 1rem;
+}
+
+.accordion-content.open {
+  padding: 1rem;
+}
+
+
+        #output {
+          margin-top: 1.5rem;
+        }
+    
+        textarea {
+          width: 100%;
+          box-sizing: border-box;
+          font-family: monospace;
+          font-size: 0.9rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          padding: 0.5rem;
+        }
+    
+        a.download-link {
+          display: inline-block;
+          margin-top: 1rem;
+          background-color: #ac1f24;
+          color: #fff;
+          padding: 0.6rem 1.2rem;
+          text-decoration: none;
+          border-radius: 4px;
+          font-weight: 500;
+          transition: background 0.2s;
+        }
+    
+        a.download-link:hover {
+          background-color: #8c1820;
+        }
+    
+        /* Output area */
+.output-box {
+  width: 100%;
+  height: 200px;          /* fixed height */
+  resize: vertical;
+  overflow: auto;         /* scrollbar when needed */
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  background: #fafafa;
+}
+
+/* Flow chart */
+.flow-chart {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.flow-step {
+  flex: 1;
+  min-width: 200px;
+  background: #fdf2f3;
+  border: 2px solid #ac1f24;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.flow-step:hover {
+  transform: translateY(-4px);
+}
+
+.flow-step h3 {
+  margin: 0.5rem 0;
+  color: #ac1f24;
+}
+
+a {
+    color: #ac1f24;
+    text-decoration: none;
+}
+
+.flow-step p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.flow-step {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.3s, transform 0.2s;
+}
+
+.flow-step.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none; /* block clicks */
+}
+        footer {
+          background: #222;
+          color: #ccc;
+          text-align: center;
+          padding: 1rem;
+          font-size: 0.85rem;
+        }
+    
+        footer a {
+          color: #eee;
+          text-decoration: none;
+        }
+    
+        footer a:hover {
+          text-decoration: underline;
+        }
+      </style>
 </head>
 <body>
+
+    <header>
     <h1>Convert LST to  HEX</h1>
-    <p><i> This app converts an output .lst file from Keil uVision 4 to a Hex file. 
+</header>
+    <main>
+        <p class="description"> This app converts an output .lst file from Keil uVision 4 to a Hex file. 
         The Hex can be imported into VerilogHDL with a memh command.
     
         Written with help of ChatGPT using pure HTML and JavaScript. The file runs in client-side
-        without any server help.
+        without any server help. Source Code at: <a href="https://github.com/sajidbuet/lst2hex/">github.com/sajidbuet/lst2hex</a>
         
-        Main function is written by Dr. Sajid Muhaimin Choudhury</i>
+        Main function is written by Dr. Sajid Muhaimin Choudhury
     </p>
+    <h2>Instructions</h2>
+    <div class="accordion">
+      <div class="accordion-header">Show Instructions ▼</div>
+      <div class="accordion-content">
+        <ol class="instructions">
+          <li>Compile your Assembly or C code using <b>Keil uVision 4</b>.  
+              A <code>.lst</code> file will be generated in the project folder.  
+              (For reference, a sample <code>main.lst</code> file is provided in the repository.)</li>
+          <li>Upload your <code>.lst</code> file using Step 1 below.</li>
+          <li>Click <b>Convert to HEX</b> (Step 2) to generate the HEX file.</li>
+          <li>Download the HEX file (Step 3). You may rename it with a <code>.dat</code> extension if required.</li>
+          <li>Add the HEX/DAT file into your <b>ModelSim</b> or <b>Vivado</b> project using the <code>$readmemh</code> command.</li>
+        </ol>
+      </div>
+    </div>
+    
+    
+    <h2>Quick 3-Step Process</h2>
+    <div class="flow-chart">
+        <div class="flow-step" id="step1">
+          <h3>Step 1</h3>
+          <p>Click to upload your <code>.lst</code> file</p>
+        </div>
+        <div class="flow-step disabled" id="step2">
+          <h3>Step 2</h3>
+          <p>Click to convert uploaded file to HEX</p>
+        </div>
+        <div class="flow-step disabled" id="step3">
+          <h3>Step 3</h3>
+          <p>Click to download the HEX file</p>
+        </div>
+      </div>
+<input type="file" id="lst-file" accept=".lst" style="display:none">
+
+  <div id="output"></div>
+<!--
     <form id="lst-to-memh" enctype="multipart/form-data">
         <label for="lst-file">Select a Keil uVision LST file to convert:</label>
         <input type="file" id="lst-file" name="lst-file" accept=".lst"><br><br>
         <input type="submit" value="Convert to HEX">
     </form>
+    -->
     <br>
-    <div id="output">
-    </div>
+    <div id="output"></div>
+    </main>
+    <footer>
+        © 2025 Sajid Muhaimin Choudhury. Licensed under the 
+        <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.
+      </footer>
 
-    <script>
+      <script>
+        let uploadedLst = null;
+        let generatedHex = null;
+      
         function parseLstFile(lst) {
-            let lines = lst.split('\n');
-            let memh = '';
-            let firstline = true;
-            let linenum = 0;
-
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
-                let instruction = line.split(/\s+/);
-
-                if (line.length > 0 && (!isNaN(instruction[0])) && instruction[0]>0 ) {
-                    if(isHex(instruction[2])) {
-                        if(instruction[1].length==8) {
-                    let content = instruction[1];
-                    memh += instruction[2] + '\n';
-                    firstline = false;
+          let lines = lst.split('\n');
+          let memh = '';
+          for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            let instruction = line.split(/\s+/);
+            if (line.length > 0 && (!isNaN(instruction[0])) && instruction[0] > 0) {
+              if (/^[0-9a-fA-F]+$/.test(instruction[2])) {
+                if (instruction[1].length === 8) {
+                  memh += instruction[2] + '\n';
                 }
+              }
             }
-                }
-            }
-
-            return memh;
+          }
+          return memh;
         }
-
-        function isHex(str) {
-            // regular expression to match a hexadecimal number
-            const hexRegex = /^[0-9a-fA-F]+$/;
-
-            // check if the string matches the hex regex
-            return hexRegex.test(str);
-        }
-
-        function handleFileSelect(event) {
-            event.preventDefault();
-
-            let lstFile = document.getElementById('lst-file').files[0];
-
-            if (lstFile) {
-                let reader = new FileReader();
-
-                reader.onload = function (e) {
-                    let lst = e.target.result;
-                    let memh = parseLstFile(lst);
-                    let output = document.getElementById('output');
-                    output.innerHTML = '<h2>Generated Verilog memh file:</h2><textarea cols="50" rows="20">' + memh + '</textarea><br><a href="data:text/plain;charset=utf-8,' + encodeURIComponent(memh) + '" download="memh.hex">Download HEX file</a>';
-                };
-
-                reader.readAsText(lstFile);
-            }
-        }
-
-        let form = document.getElementById('lst-to-memh');
-        form.addEventListener('submit', handleFileSelect, false);
-    </script>
+      
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const fileInput = document.getElementById('lst-file');
+      
+        // Step 1: upload
+        step1.addEventListener('click', () => {
+          fileInput.click();
+        });
+      
+        fileInput.addEventListener('change', (e) => {
+          let file = e.target.files[0];
+          if (file) {
+            let reader = new FileReader();
+            reader.onload = function(evt) {
+              uploadedLst = evt.target.result;
+              document.getElementById('output').innerHTML =
+                "<p><b>File uploaded:</b> " + file.name + "</p>";
+              // Enable Step 2
+              step2.classList.remove('disabled');
+            };
+            reader.readAsText(file);
+          }
+        });
+      
+        // Step 2: convert
+        step2.addEventListener('click', () => {
+          generatedHex = parseLstFile(uploadedLst);
+          document.getElementById('output').innerHTML =
+            '<h2>Generated Verilog memh file:</h2>' +
+            '<textarea readonly class="output-box">' + generatedHex + '</textarea>';
+          // Enable Step 3
+          step3.classList.remove('disabled');
+        });
+      
+        // Step 3: download
+        step3.addEventListener('click', () => {
+          let link = document.createElement('a');
+          link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(generatedHex));
+          link.setAttribute('download', 'memh.hex');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
+      </script>
+<script>
+    // Accordion logic
+    const accHeader = document.querySelector(".accordion-header");
+    const accContent = document.querySelector(".accordion-content");
+  
+    accHeader.addEventListener("click", () => {
+      if (accContent.style.maxHeight) {
+        // Collapse
+        accContent.style.maxHeight = null;
+        accContent.classList.remove("open");
+        accHeader.textContent = "Show Instructions ▼";
+      } else {
+        // Expand
+        accContent.style.maxHeight = accContent.scrollHeight + "px";
+        accContent.classList.add("open");
+        accHeader.textContent = "Hide Instructions ▲";
+      }
+    });
+  </script>
+  
 </body>
 </html>
